@@ -1,0 +1,312 @@
+.header {
+  background: #E6F4FA;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+/* Логотип */
+.logo-section {
+  width: 100px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #2c3e50;
+  font-weight: 700;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.logo-icon {
+  width: 55px;
+  transition: transform 0.3s ease;
+  transform: scale(2.5); /* Увеличиваем содержимое */
+  transform-origin: center;
+  padding-right: 8%;
+}
+
+.logo-section:hover .logo-icon {
+  transform: scale(2.3);
+}
+
+.logo-text {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  /* Увеличиваем содержимое */
+  transform: scale(2.3);
+  padding-top: 0.21em;
+  transform-origin: left;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Навигация */
+.nav {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+
+.nav-link {
+  color: #000000;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.nav-link:hover {
+  color: #00A8CC;
+  background: rgba(0, 123, 255, 0.1);
+}
+
+.nav-link.active {
+  color: #00A8CC;
+  background: rgba(0, 123, 255, 0.1);
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background: #007bff;
+  border-radius: 1px;
+}
+
+/* Правая часть */
+.header-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Иконки */
+.icon-button {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 8px;
+  color: #FF5A30;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-button:hover {
+  color: #007bff;
+  background: rgba(0, 123, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #e74c3c;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.1rem 0.4rem;
+  border-radius: 10px;
+  min-width: 16px;
+  text-align: center;
+}
+
+.search-icon {
+  width: 44px;
+  height: 34px;
+  padding-bottom: 3px;
+}
+
+/* Контакты */
+.contact-info {
+  display: flex;
+  flex-direction:row;
+  gap: 0.3rem;
+  margin-left: 1rem;
+  padding-left: 1rem;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.contact-icon {
+  color: #007bff;
+  flex-shrink: 0;
+  padding-left: 10px;
+  width: 45px;
+
+}
+
+.message-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.message-icon {
+  flex-shrink: 0;
+  height: 55px;
+}
+
+.contact-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-label {
+  font-size: 0.65rem;
+  color: #6c757d;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.contact-value {
+  font-size: 0.75rem;
+  color: #2c3e50;
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+/* Бургер-кнопка */
+.burger-menu-button {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.burger-menu-button span {
+  height: 2px;
+  width: 100%;
+  background: #6c757d;
+  border-radius: 1px;
+  transition: all 0.3s ease;
+}
+
+.burger-menu-button:hover span {
+  background: #007bff;
+}
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+  .header-container {
+    padding: 0 1.5rem;
+    gap: 1.5rem;
+  }
+  
+  .nav {
+    gap: 1rem;
+  }
+  
+  .nav-link {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .contact-info {
+    display: none;
+  }
+  
+  .burger-menu-button {
+    display: flex;
+  }
+}
+
+@media (max-width: 900px) {
+  .nav {
+    gap: 0.75rem;
+  }
+  
+  .nav-link {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+  
+  .header-right {
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    padding: 0 1rem;
+    gap: 1rem;
+  }
+  
+  .logo-text {
+    display: none;
+  }
+  
+  .nav {
+    display: none;
+  }
+  
+  .header-right {
+    gap: 0.5rem;
+  }
+  
+  .icon-button {
+    padding: 0.4rem;
+  }
+  
+  .icon-button svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-container {
+    padding: 0 0.75rem;
+  }
+  
+  .message-button {
+    display: none;
+  }
+  
+  .search-button {
+    display: none;
+  }
+}

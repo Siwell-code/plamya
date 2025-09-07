@@ -1,0 +1,97 @@
+/* ===== КОНТЕЙНЕР ДЛЯ ТОЧЕК ===== */
+.dots-container {
+  position: fixed;
+  top: 120px;
+  left: 100px;
+  right: 0;
+  height: calc(100vh - 120px);
+  pointer-events: none;
+  z-index: 90;
+  transition: all 0.3s ease;
+}
+
+.dots-container.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-20px);
+}
+
+/* ===== ТОЧКИ НАВИГАЦИИ ===== */
+.dot {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #007bff;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+
+.dot:hover {
+  background: rgba(0, 123, 255, 0.2);
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.dot.active {
+  background: #007bff;
+  transform: translate(-50%, -50%) scale(1.3);
+  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.3);
+  animation: pulse 2s infinite;
+}
+
+/* ===== РАСПОЛОЖЕНИЕ ТОЧЕК ===== */
+.dot-0 { top: 25%; left: 35%; }
+.dot-1 { top: 40%; left: 35%; }
+.dot-2 { top: 55%; left: 34%; }
+.dot-3 { top: 25%; left: 44%; }
+.dot-4 { top: 15%; left: 40%; }
+.dot-5 { top: 45%; left: 42%; }
+.dot-6 { top: 26%; left: 55%; }
+.dot-7 { top: 45%; left: 55%; }
+.dot-8 { top: 5%; left: 59%; }
+.dot-9 { top: 20%; left: 59%; }
+.dot-10 { top: 50%; left: 59%; }
+.dot-11 { top: 25%; left: 70%; }
+.dot-12 { top: 60%; left: 71%; }
+
+/* ===== АНИМАЦИЯ ПУЛЬСАЦИИ ===== */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
+}
+
+/* ===== АДАПТИВНОСТЬ ===== */
+@media (max-width: 768px) {
+  .dots-container {
+    top: 80px;
+    left: 20px;
+    right: 20px;
+    height: calc(100vh - 140px);
+  }
+
+  /* Мобильное расположение точек */
+  .dot-0 { top: 10%; left: 20%; }
+  .dot-1 { top: 20%; left: 80%; }
+  .dot-2 { top: 35%; left: 30%; }
+  .dot-3 { top: 50%; left: 70%; }
+  .dot-4 { top: 65%; left: 40%; }
+  .dot-5 { top: 80%; left: 60%; }
+  .dot-6 { top: 25%; left: 50%; }
+  .dot-7 { top: 40%; left: 10%; }
+  .dot-8 { top: 55%; left: 90%; }
+  .dot-9 { top: 70%; left: 25%; }
+  .dot-10 { top: 85%; left: 75%; }
+  .dot-11 { top: 30%; left: 65%; }
+  .dot-12 { top: 45%; left: 35%; }
+}
+
+@media (max-width: 480px) {
+  .dot {
+    width: 14px;
+    height: 14px;
+  }
+}
