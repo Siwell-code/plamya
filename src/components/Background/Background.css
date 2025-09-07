@@ -21,8 +21,11 @@
   background: rgba(0, 0, 0, 0.4);
 }
 
+/* Мобильные с WebP */
 @media (max-width: 768px) {
   .background-wrapper {
-    background-attachment: scroll;
+    background-image: url('../../assets/images/Background-mobile.webp');
+    background-size: cover;
+    background-position: center;
   }
 }
