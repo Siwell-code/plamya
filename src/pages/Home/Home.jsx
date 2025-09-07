@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { iconItems } from '../../data/iconData';
 import './Home.css';
 import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
-import NavigationDots from '../../components/NavigationDots/NavigationDots'; // Импортируем новый компонент
+import NavigationDots from '../../components/NavigationDots/NavigationDots';
 
 const Home = () => {
   const [activeDot, setActiveDot] = useState(0);
@@ -10,7 +10,6 @@ const Home = () => {
   const [selectedPath, setSelectedPath] = useState([]);
   const [firstMenuPosition, setFirstMenuPosition] = useState({ top: 0, left: 0 });
   const [hoverTimeout, setHoverTimeout] = useState(null);
-  const [isOverPopup, setIsOverPopup] = useState(false);
   const popupRef = useRef(null);
 
   useEffect(() => {
@@ -24,7 +23,6 @@ const Home = () => {
 
   const closeAllMenus = useCallback(() => {
     setSelectedPath([]);
-    setIsOverPopup(false);
     if (hoverTimeout) {
       clearTimeout(hoverTimeout);
       setHoverTimeout(null);
@@ -85,7 +83,6 @@ const Home = () => {
     }
     
     setSelectedPath([item.id]);
-    setIsOverPopup(false);
   };
 
   const handleContentClick = (contentItem, event) => {
@@ -123,7 +120,6 @@ const Home = () => {
   };
 
   const handlePopupEnter = () => {
-    setIsOverPopup(true);
     if (hoverTimeout) {
       clearTimeout(hoverTimeout);
       setHoverTimeout(null);
@@ -131,7 +127,6 @@ const Home = () => {
   };
 
   const handlePopupLeave = () => {
-    setIsOverPopup(false);
     const timeout = setTimeout(() => {
       closeAllMenus();
     }, 300);
