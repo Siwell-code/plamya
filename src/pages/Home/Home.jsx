@@ -181,13 +181,16 @@ const Home = () => {
     };
   }, [handleClickOutside]);
 
-  useEffect(() => {
-    return () => {
-      if (hoverTimeoutRef.current) {
-        clearTimeout(hoverTimeoutRef.current);
-      }
-    };
-  }, []);
+useEffect(() => {
+  // Копируем значение ref в переменную внутри эффекта
+  const currentHoverTimeout = hoverTimeoutRef.current;
+  
+  return () => {
+    if (currentHoverTimeout) {
+      clearTimeout(currentHoverTimeout);
+    }
+  };
+}, []);
 
   // Вспомогательные функции
   const getCurrentIcon = useCallback(() => 

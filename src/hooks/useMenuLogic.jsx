@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 
 export const useMenuLogic = () => {
   const [selectedPath, setSelectedPath] = useState([]);
