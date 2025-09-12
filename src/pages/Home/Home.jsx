@@ -1,76 +1,59 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { iconItems } from '../../data/iconData';
 import './Home.css';
 import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
 import NavigationDots from '../../components/NavigationDots/NavigationDots';
+import { useDeviceDetection } from '../../hooks/useDeviceDetection';
+import { useMenuLogic } from '../../hooks/useMenuLogic';
+import { usePopupLogic } from '../../hooks/usePopupLogic';
 
 const Home = () => {
+  const { isTouch } = useDeviceDetection();
+  const {
+    selectedPath,
+    setSelectedPath,
+    mobileSubmenu,
+    setMobileSubmenu,
+    closeAllMenus
+  } = useMenuLogic();
+
+  const {
+    firstMenuPosition,
+    setFirstMenuPosition,
+    calculatePopupPosition
+  } = usePopupLogic();
+
   const [activeDot, setActiveDot] = useState(0);
   const [isHeaderHidden, setIsHeaderHidden] = useState(false);
-  const [selectedPath, setSelectedPath] = useState([]);
-  const [firstMenuPosition, setFirstMenuPosition] = useState({ top: 0, left: 0 });
-  const [hoverTimeout, setHoverTimeout] = useState(null);
   const popupRef = useRef(null);
+  const hoverTimeoutRef = useRef(null);
+  const touchStartTimeRef = useRef(0);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsHeaderHidden(window.scrollY > 160);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+  // Обработчики событий
+  const handleScroll = useCallback(() => {
+    setIsHeaderHidden(window.scrollY > 160);
   }, []);
 
-  const closeAllMenus = useCallback(() => {
-    setSelectedPath([]);
-    if (hoverTimeout) {
-      clearTimeout(hoverTimeout);
-      setHoverTimeout(null);
+  const handleEscape = useCallback((e) => {
+    if (e.key === 'Escape') {
+      closeAllMenus();
     }
-  }, [hoverTimeout]);
-
-  useEffect(() => {
-    const handleEscape = (e) => {
-      if (e.key === 'Escape') {
-        closeAllMenus();
-      }
-    };
-
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
   }, [closeAllMenus]);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (popupRef.current && !popupRef.current.contains(event.target)) {
-        closeAllMenus();
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [closeAllMenus]);
-
-  const calculatePopupPosition = (element) => {
-    if (!element) {
-      return { top: 0, left: 0 };
+  const handleClickOutside = useCallback((event) => {
+    if (popupRef.current && !popupRef.current.contains(event.target)) {
+      // Проверяем, не был ли это быстрый тап по элементу меню
+      const touchTime = Date.now() - touchStartTimeRef.current;
+      if (isTouch && touchTime < 300) return;
+      
+      closeAllMenus();
     }
+  }, [closeAllMenus, isTouch]);
 
-    try {
-      const rect = element.getBoundingClientRect();
-      return {
-        top: rect.top + window.scrollY - 110,
-        left: rect.right + -10
-      };
-    } catch (error) {
-      console.error('Error calculating position:', error);
-      return { top: 0, left: -10 };
-    }
-  };
-
-  const handleIconClick = (item, event) => {
-    if (!event?.currentTarget) return;
-
+  const handleIconClick = useCallback((item, event) => {
+    if (isTouch) return; // На мобильных используем только touch
+    
+    event?.stopPropagation();
     const position = calculatePopupPosition(event.currentTarget);
     setFirstMenuPosition(position);
     
@@ -83,19 +66,71 @@ const Home = () => {
     }
     
     setSelectedPath([item.id]);
-  };
+  }, [calculatePopupPosition, setFirstMenuPosition, setSelectedPath, isTouch]);
 
-  const handleContentClick = (contentItem, event) => {
-    if (!event?.currentTarget) return;
+  const handleIconTouch = useCallback((item, event) => {
+    if (!isTouch) return;
     
+    event?.stopPropagation();
+    event?.preventDefault();
+    
+    touchStartTimeRef.current = Date.now();
+    
+    const position = calculatePopupPosition(event.currentTarget);
+    setFirstMenuPosition(position);
+    
+    if (item.id === 3) {
+      document.getElementById("section28")?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+      return;
+    }
+    
+    setSelectedPath([item.id]);
+  }, [calculatePopupPosition, setFirstMenuPosition, setSelectedPath, isTouch]);
+
+  const handleServiceClick = useCallback((service, event) => {
+    event?.stopPropagation();
+
+    if (service.section) {
+      document.getElementById(service.section)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+    closeAllMenus();
+  }, [closeAllMenus]);
+
+  const handleServiceTouch = useCallback((service, event) => {
+    event?.stopPropagation();
+    event?.preventDefault();
+
+    if (service.section) {
+      document.getElementById(service.section)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+    closeAllMenus();
+  }, [closeAllMenus]);
+
+  // Обработчик для элементов первого меню на мобильных
+  const handleMobileContentSelect = useCallback((contentItem, event) => {
+    event?.stopPropagation();
+    event?.preventDefault();
+    
+    touchStartTimeRef.current = Date.now();
+    
+    // Для второй иконки - сразу скроллим
     if (selectedPath[0] === 2) {
-      let sectionId = "";
-      switch(contentItem.id) {
-        case 21: sectionId = "section16"; break;
-        case 22: sectionId = "section20"; break;
-        case 23: sectionId = "section24"; break;
-        default: break;
-      }
+      const sectionMap = {
+        21: "section16",
+        22: "section20", 
+        23: "section24"
+      };
+      
+      const sectionId = sectionMap[contentItem.id];
       if (sectionId) {
         document.getElementById(sectionId)?.scrollIntoView({
           behavior: 'smooth',
@@ -106,52 +141,80 @@ const Home = () => {
       return;
     }
     
-    event.stopPropagation();
-    setSelectedPath([selectedPath[0], contentItem.id]);
-  };
+    // Для первой иконки - открываем/закрываем подменю
+    setMobileSubmenu(prev => prev === contentItem.id ? null : contentItem.id);
+    
+    // Устанавливаем selectedPath для подсветки активного элемента
+    setSelectedPath(prev => [prev[0], contentItem.id]);
+  }, [selectedPath, closeAllMenus, setMobileSubmenu, setSelectedPath]);
 
-  const handleContentHover = (contentItem, event) => {
-    if (!event?.currentTarget) return;
-
+  // Обработчик для элементов первого меню на десктопе
+  const handleContentHover = useCallback((contentItem, event) => {
+    if (isTouch) return;
+    
+    event?.stopPropagation();
+    
     if (selectedPath[0] === 1) {
-      event.stopPropagation();
       setSelectedPath([selectedPath[0], contentItem.id]);
     }
-  };
+  }, [selectedPath, setSelectedPath, isTouch]);
 
-  const handlePopupEnter = () => {
-    if (hoverTimeout) {
-      clearTimeout(hoverTimeout);
-      setHoverTimeout(null);
-    }
-  };
+  // Эффекты
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
 
-  const handlePopupLeave = () => {
-    const timeout = setTimeout(() => {
-      closeAllMenus();
-    }, 300);
-    setHoverTimeout(timeout);
-  };
+  useEffect(() => {
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [handleEscape]);
 
-  const handleServiceClick = (service, event) => {
-    event?.stopPropagation();
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', (e) => {
+      touchStartTimeRef.current = Date.now();
+    });
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [handleClickOutside]);
 
-    if (service.section) {
-      document.getElementById(service.section)?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-    closeAllMenus();
-  };
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
 
-  const getCurrentIcon = () => iconItems.find(item => item.id === selectedPath[0]);
-  const getCurrentContentItems = () => getCurrentIcon()?.content || [];
-  const getCurrentServices = () => {
+  // Вспомогательные функции
+  const getCurrentIcon = useCallback(() => 
+    iconItems.find(item => item.id === selectedPath[0]), 
+    [selectedPath]
+  );
+  
+  const getCurrentContentItems = useCallback(() => 
+    getCurrentIcon()?.content || [], 
+    [getCurrentIcon]
+  );
+  
+  const getCurrentServices = useCallback(() => {
     const icon = getCurrentIcon();
-    const contentItem = icon?.content?.find(item => item.id === selectedPath[1]);
-    return contentItem?.services || [];
-  };
+    if (!icon) return [];
+    
+    if (selectedPath[0] === 2) {
+      return icon.content || [];
+    }
+    
+    if (selectedPath[0] === 1 && selectedPath[1]) {
+      const contentItem = icon.content?.find(item => item.id === selectedPath[1]);
+      return contentItem?.services || [];
+    }
+    
+    return [];
+  }, [getCurrentIcon, selectedPath]);
 
   return (
     <div className="home-page">
@@ -161,7 +224,8 @@ const Home = () => {
           <div
             key={item.id}
             className={`icon-button1 ${selectedPath[0] === item.id ? 'active' : ''}`}
-            onClick={(e) => handleIconClick(item, e)}
+            onClick={(e) => !isTouch && handleIconClick(item, e)}
+            onTouchEnd={(e) => isTouch && handleIconTouch(item, e)}
             title={item.name}
           >
             {item.icon}
@@ -170,42 +234,88 @@ const Home = () => {
         ))}
       </div>
 
-      {/* Меню уровня 1 (только для иконок 1 и 2) */}
+      {/* Меню уровня 1 */}
       {selectedPath.length >= 1 && selectedPath[0] !== 3 && (
         <>
-          <div className="popup-overlay" onClick={closeAllMenus} />
+          <div 
+            className="popup-overlay" 
+            onClick={(e) => !isTouch && closeAllMenus()}
+            onTouchEnd={(e) => {
+              // Для мобильных - закрываем только при тапе на оверлей, а не на меню
+              if (isTouch && popupRef.current && !popupRef.current.contains(e.target)) {
+                closeAllMenus();
+              }
+            }}
+          />
           <div
             ref={popupRef}
-            className="popup-content level1"
+            className={`popup-content level1 ${
+              selectedPath[0] === 1 ? 'menu-icon1' : 
+              selectedPath[0] === 2 ? 'menu-icon2' : ''
+            }`}
             style={{
               top: `${firstMenuPosition.top}px`,
               left: `${firstMenuPosition.left}px`
             }}
-            onMouseEnter={handlePopupEnter}
-            onMouseLeave={handlePopupLeave}
           >
+            
             <ul className="main-menu">
               {getCurrentContentItems().map((contentItem) => (
                 <li
                   key={contentItem.id}
-                  className={`content-item ${selectedPath[1] === contentItem.id ? 'active' : ''}`}
-                  onClick={(e) => handleContentClick(contentItem, e)}
-                  onMouseEnter={(e) => handleContentHover(contentItem, e)}
+                  className={`content-item ${selectedPath[1] === contentItem.id ? 'active' : ''} ${
+                    isTouch && mobileSubmenu === contentItem.id ? 'submenu-open' : ''
+                  }`}
+                  onClick={(e) => {
+                    if (isTouch) return; // На мобильных используем только touch
+                    e.stopPropagation();
+                    // Логика для десктопа
+                    if (selectedPath[0] === 2) {
+                      const sectionMap = {
+                        21: "section16",
+                        22: "section20", 
+                        23: "section24"
+                      };
+                      const sectionId = sectionMap[contentItem.id];
+                      if (sectionId) {
+                        document.getElementById(sectionId)?.scrollIntoView({
+                          behavior: 'smooth',
+                          block: 'start'
+                        });
+                        closeAllMenus();
+                      }
+                    } else {
+                      setSelectedPath([selectedPath[0], contentItem.id]);
+                    }
+                  }}
+                  onTouchEnd={(e) => {
+                    if (!isTouch) return;
+                    e.stopPropagation();
+                    e.preventDefault();
+                    handleMobileContentSelect(contentItem, e);
+                  }}
+                  onMouseEnter={(e) => !isTouch && handleContentHover(contentItem, e)}
                 >
-                  {contentItem.name}
+                  <span className="menu-item-text">{contentItem.name}</span>
                   
-                  {selectedPath[0] === 1 && 
-                   selectedPath[1] === contentItem.id && 
-                   selectedPath.length === 2 && (
+                  {/* Стрелка для мобильных, если есть подменю */}
+                  {isTouch && selectedPath[0] === 1 && contentItem.services && contentItem.services.length > 0 && (
+                    <span className="mobile-arrow">
+                      {mobileSubmenu === contentItem.id ? '▲' : '▼'}
+                    </span>
+                  )}
+                  
+                  {/* Подменю */}
+                  {selectedPath[0] === 1 && selectedPath[1] === contentItem.id && 
+                   ((isTouch && mobileSubmenu === contentItem.id) || 
+                   (!isTouch && selectedPath[1] === contentItem.id)) && (
                     <div className="sub-popup">
                       <div
                         className="popup-content level2"
                         style={{
-                          top: `-96px`,
-                          left: `calc(100% + 30px)`
+                          top: isTouch ? '100%' : '0',
+                          left: isTouch ? '0' : 'calc(100% + 10px)'
                         }}
-                        onMouseEnter={handlePopupEnter}
-                        onMouseLeave={handlePopupLeave}
                       >
                         <ul className="services-menu">
                           {getCurrentServices().map((service, index) => (
@@ -213,6 +323,7 @@ const Home = () => {
                               key={index}
                               className="service-item"
                               onClick={(e) => handleServiceClick(service, e)}
+                              onTouchEnd={(e) => handleServiceTouch(service, e)}
                             >
                               {service.name}
                             </li>
@@ -228,7 +339,6 @@ const Home = () => {
         </>
       )}
 
-      {/* Компонент точек навигации */}
       <NavigationDots 
         activeDot={activeDot}
         setActiveDot={setActiveDot}
@@ -236,7 +346,7 @@ const Home = () => {
       />
 
       <ScrollToTop />
-      {/* Контент страницы с секциями */}
+      
       <div className="content">
         <div id="section1" className="section_2"></div>
         <div id="section2" className="section">Секция 2: Архитектурные планы</div>
@@ -254,12 +364,10 @@ const Home = () => {
         <div id="section14" className="section">Секция 14: Модернизация систем</div>
         <div id="section15" className="section">Секция 15: Круглосуточная поддержка</div>
         
-        {/* Секции для иконки 2 */}
         <div id="section16" className="section">Секция 16: Разработка систем безопасности</div>
         <div id="section20" className="section">Секция 20: Установка систем видеонаблюдения</div>
         <div id="section24" className="section">Секция 24: Техническое обслуживание систем</div>
         
-        {/* Секция для иконки 3 */}
         <div id="section28" className="section">Секция 28: Разработка СТУ</div>
       </div>
     </div>

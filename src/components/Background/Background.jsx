@@ -1,35 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './Background.css';
-import BackgroundDesktop from '../../assets/images/Background.jpg'; // Добавить импорт
-import BackgroundMobile from '../../assets/images/BackgroundMobile.webp';
+// Импортируем ОДИН фоновый образ в формате WebP
+import BackgroundWebP from '../../assets/images/BackgroundMobile.webp'; // Переименуй файл и укажи правильный путь
 
 const Background = () => {
-  const [isMobile, setIsMobile] = useState(true);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const backgroundImage = isMobile ? BackgroundMobile : BackgroundDesktop;
-
-useEffect(() => {
-  console.log('isMobile:', isMobile);
-  console.log('BackgroundDesktop:', BackgroundDesktop);
-  console.log('BackgroundMobile:', BackgroundMobile);
-}, [isMobile]);
+  // Всё, что связано с isMobile - УДАЛЕНО
 
   return (
     <div 
       className="background-wrapper"
       style={{ 
-        backgroundImage: `url(${backgroundImage})`
+        backgroundImage: `url(${BackgroundWebP})`
       }}
     >
       <div className="background-overlay"></div>
