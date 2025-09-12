@@ -89,13 +89,6 @@ body {
     font-size: 14px;
   }
 }
-/* Улучшенная читаемость на фоне */
-/* .transparent-bg {
-  background: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(15px);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-} */
 
 /* Карточки */
 .card {
@@ -119,7 +112,7 @@ body {
 
 @media (max-width: 768px) {
   body {
-    background-attachment: scroll; /* Убираем fixed для мобильных */
+    background-attachment: scroll; 
   }
   
   .transparent-bg {

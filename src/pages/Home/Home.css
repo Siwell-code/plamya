@@ -112,6 +112,7 @@
   right: 0;
   bottom: 0;
   z-index: 199;
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .popup-content {
@@ -151,6 +152,8 @@
 .services-menu,
 .services-list {
   list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .services-menu {
@@ -165,13 +168,39 @@
   background-color: #0F1010;
   cursor: pointer;
   padding: 25px;
-  margin: 15px;
+  margin: 15px 0;
   border-radius: 6px;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .content-item:hover {
   background-color: #ffffff;
+  color: #0F1010;
+}
+
+.menu-item-text {
+  flex-grow: 1;
+}
+
+.mobile-arrow {
+  margin-left: 10px;
+  font-size: 12px;
+  color: #ffffff;
+}
+
+.content-item:hover .mobile-arrow {
+  color: #0F1010;
+}
+
+.content-item.submenu-open {
+  background-color: #f0f0f0;
+  color: #0F1010;
+}
+
+.content-item.submenu-open .mobile-arrow {
   color: #0F1010;
 }
 
@@ -214,6 +243,8 @@
   margin: 10px;
   border-radius: 6px;
   transition: all 0.2s ease;
+  color: #ffffff;
+  cursor: pointer;
 }
 
 .service-item:hover {
@@ -232,6 +263,25 @@
   left: 100%;
   z-index: 1000;
   animation: slideInRight 0.3s ease;
+}
+
+/* ===== КНОПКА ЗАКРЫТИЯ МОБИЛЬНОГО МЕНЮ ===== */
+.mobile-close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ff4757;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  z-index: 10001;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ===== СКРОЛЛБАРЫ ===== */
@@ -321,7 +371,6 @@
 }
 
 .section {
-  
   background-color: #0445858e;
   height: 100vh;
   display: flex;
@@ -334,7 +383,7 @@
 }
 
 .section_2 {
-    height: 100vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -379,43 +428,77 @@
 }
 
 @keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
+ 0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4); }
+ 70% { box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); }
+ 100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
 }
 
 /* ===== АДАПТИВНОСТЬ ===== */
 @media (max-width: 1024px) {
-  .sub-popup {
-    position: static;
-    margin-left: 0;
-    margin-top: 0.5rem;
-    box-shadow: none;
-    border: none;
-    background: #333;
+  .dots-container {
+    display: none;
   }
   
-    .left-panel {
-    top: 40%;
+  .left-panel {
+    top: 36%;
+    left: 10%;
     bottom: 0;
     width: 15%;
     height: auto;
+    transform: scale(1.8);
     flex-direction: column;
-    padding: 0.8rem 0;
+    padding: 1.8rem 0;
     border-radius: 12px 12px 0 0;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
   }
-
+  
+  .popup-content.level1 {
+    min-width: 280px;
+    max-width: 350px;
+  }
+  
+  .popup-content.level1.menu-icon1 {
+    top: 100px !important;
+    max-height: 950px;
+  }
+  
+  .popup-content.level1.menu-icon2 {
+    top: 640px !important;
+    max-height: 380px;
+  }
+  
+  .services-menu {
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+  }
+  
+  .main-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-height: 0;
+  }
+  
+  .icon-button1 {
+    margin-top: 45%;
+  }
+  
+  .content-item {
+    font-size: large;
+  }
+  
   .service-item {
-    padding: 0.5rem 0;
+    padding: 0.7rem 1rem;
     font-size: 0.85rem;
   }
 }
 
 @media (max-width: 768px) {
   .left-panel {
-    top: 20%;
+    top: auto;
     bottom: 0;
+    left: 0;
     width: 100%;
     height: auto;
     flex-direction: row;
@@ -423,6 +506,8 @@
     padding: 0.8rem 0;
     border-radius: 12px 12px 0 0;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
+    transform: none;
+    background: #42403E;
   }
 
   .left-panel.hidden {
@@ -433,6 +518,7 @@
     width: 60px;
     height: 60px;
     padding: 0.3rem;
+    margin-top: 0;
   }
 
   .icon-name {
@@ -457,27 +543,79 @@
     transform: scale(1.1);
   }
 
-  .popup-content {
-    max-width: 90%;
+  /* Мобильное меню - ВАЖНЫЕ ИЗМЕНЕНИЯ */
+  .popup-content.level1 {
+    position: fixed !important;
+    top: 50% !important;
     left: 50% !important;
-    transform: translateX(-50%);
-    bottom: 80px;
-    top: auto !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90%;
+    max-width: 300px;
+    max-height: 80vh;
+    overflow-y: auto;
+    z-index: 10000;
+    touch-action: manipulation;
   }
-
+  
+  /* Подменю для мобильных - раскрывается ВНУТРИ основного меню */
   .sub-popup {
-    position: static;
-    margin: 0.5rem 0;
+    position: relative !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100%;
+    animation: none;
   }
-
-  .sub-item {
-    padding: 0.6rem 0.8rem;
+  
+  .popup-content.level2 {
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100%;
+    max-height: 300px;
+    margin-top: 10px;
+    background: #2c2a28;
+    border: 1px solid #555;
+  }
+  
+  /* Стили для открытого подменю */
+  .content-item.has-submenu {
+    background-color: #1a1a1a;
+  }
+  
+  .content-item.submenu-open {
+    background-color: #f0f0f0;
+    color: #0F1010;
+    margin-bottom: 0;
+    border-radius: 6px 6px 0 0;
+  }
+  
+  .content-item.submenu-open + .sub-popup {
+    display: block;
+    margin-top: -5px;
+    border-radius: 0 0 6px 6px;
+  }
+  
+  .content-item {
+    padding: 20px 15px;
+    margin: 10px 0;
     font-size: 0.9rem;
+    min-height: 50px;
   }
-
+  
+  .mobile-arrow {
+    font-size: 10px;
+  }
+  
   .service-item {
-    padding: 0.4rem 0;
+    padding: 12px 15px;
+    margin: 5px 0;
     font-size: 0.8rem;
+    background: #3a3836;
+    border-radius: 4px;
+  }
+  
+  .service-item:active {
+    background: #979797;
   }
 
   .dots-container {
@@ -493,18 +631,94 @@
     padding: 1rem;
   }
 
-  /* Мобильное расположение точек */
-  .dot-0 { top: 10%; left: 20%; }
-  .dot-1 { top: 20%; left: 80%; }
-  .dot-2 { top: 35%; left: 30%; }
-  .dot-3 { top: 50%; left: 70%; }
-  .dot-4 { top: 65%; left: 40%; }
-  .dot-5 { top: 80%; left: 60%; }
-  .dot-6 { top: 25%; left: 50%; }
-  .dot-7 { top: 40%; left: 10%; }
-  .dot-8 { top: 55%; left: 90%; }
-  .dot-9 { top: 70%; left: 25%; }
-  .dot-10 { top: 85%; left: 75%; }
-  .dot-11 { top: 30%; left: 65%; }
-  .dot-12 { top: 45%; left: 35%; }
+  /* Улучшенная видимость для мобильных */
+  .popup-overlay {
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+  }
+  
+  /* Анимация для подменю */
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+      max-height: 0;
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+      max-height: 300px;
+    }
+  }
+  
+  .sub-popup {
+    animation: slideDown 0.3s ease;
+    overflow: hidden;
+  }
+}
+
+/* Отключение hover эффектов на тач-устройствах */
+@media (hover: none) {
+  .content-item:hover {
+    background-color: #0F1010;
+    color: #ffffff;
+  }
+  
+  .service-item:hover {
+    background-color: #42403E;
+    color: #ffffff;
+  }
+  
+  .icon-button1:hover {
+    background: transparent;
+    transform: none;
+  }
+}
+
+/* Улучшенная поддержка тач-устройств */
+@media (pointer: coarse) {
+  .content-item {
+    min-height: 50px; /* Увеличенная область для тапа */
+    display: flex;
+    align-items: center;
+  }
+  
+  .service-item {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .icon-button1 {
+    min-width: 60px;
+    min-height: 60px;
+  }
+  
+  /* Убираем задержки для тач-устройств */
+  * {
+    touch-action: manipulation;
+  }
+}
+
+/* Специальные стили для очень маленьких экранов */
+@media (max-width: 480px) {
+  .popup-content.level1 {
+    width: 95%;
+    max-width: none;
+    padding: 1rem;
+  }
+  
+  .content-item {
+    padding: 15px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .service-item {
+    padding: 10px 12px;
+    font-size: 0.75rem;
+  }
+  
+  .mobile-arrow {
+    font-size: 9px;
+  }
 }
